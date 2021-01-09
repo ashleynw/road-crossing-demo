@@ -9,6 +9,12 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile3, function (sprite, location
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     crab.y += -16
 })
+function driveCar (car: Sprite, tileImg: Image, startX: number, vx: number) {
+    car.setFlag(SpriteFlag.DestroyOnWall, true)
+    tiles.placeOnRandomTile(car, tileImg)
+    car.x = startX
+    car.vx = vx
+}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     crab.x += -16
 })
@@ -37,10 +43,11 @@ let rightCar: Sprite = null
 let leftCar: Sprite = null
 let hasBerry = false
 let berriesLeft = 0
+let crossingTime = 0
 let crab: Sprite = null
-let newColor = 0
-let car = null
 let newCar = null
+let car = null
+let newColor = 0
 tiles.setTilemap(tilemap`level`)
 crab = sprites.create(img`
     . . . . . . . . . . . c c . . . 
@@ -100,7 +107,7 @@ let rightCarImg = img`
     . . . . . . . . . . . . . . . . 
     `
 let speed = 50
-let crossingTime = 15
+crossingTime = 20
 let introMessage = `Help the snail collect berries from the other side of the road!
 You can only collect one at a time.
 Look both ways before you cross!`
@@ -109,15 +116,7 @@ info.startCountdown(crossingTime)
 berriesLeft = tiles.getTilesByType(myTiles.tile3).length
 game.onUpdateInterval(500, function () {
     leftCar = sprites.create(leftCarImg, SpriteKind.Enemy)
-    leftCar.setFlag(SpriteFlag.DestroyOnWall, true)
-    tiles.placeOnRandomTile(leftCar, sprites.vehicle.roadHorizontal)
-    leftCar.x = 180
-    leftCar.vx = 0 - speed
-})
-game.onUpdateInterval(500, function () {
+    driveCar(leftCar, sprites.vehicle.roadHorizontal, 180, 0 - speed)
     rightCar = sprites.create(rightCarImg, SpriteKind.Enemy)
-    rightCar.setFlag(SpriteFlag.DestroyOnWall, true)
-    tiles.placeOnRandomTile(rightCar, myTiles.tile2)
-    rightCar.x = -20
-    rightCar.vx = speed
+    driveCar(rightCar, myTiles.tile2, -20, speed)
 })
