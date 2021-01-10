@@ -1,6 +1,7 @@
 scene.onOverlapTile(SpriteKind.Player, myTiles.tile3, function (sprite, location) {
     if (!(hasBerry)) {
         tiles.setTileAt(location, sprites.castle.tileGrass3)
+        music.baDing.play()
         hasBerry = true
         berriesLeft += 0 - 1
         info.startCountdown(crossingTime)
@@ -27,6 +28,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (sprite, location) {
     if (hasBerry) {
         tiles.setTileAt(location, myTiles.tile5)
+        music.baDing.play()
         hasBerry = false
         speed += 10
         info.startCountdown(crossingTime)
@@ -37,7 +39,9 @@ scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (spri
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    game.over(false)
+    info.changeLifeBy(-1)
+    music.pewPew.play()
+    otherSprite.destroy()
 })
 let rightCar: Sprite = null
 let leftCar: Sprite = null
@@ -45,9 +49,8 @@ let hasBerry = false
 let berriesLeft = 0
 let crossingTime = 0
 let crab: Sprite = null
-let newCar = null
 let car = null
-let newColor = 0
+scene.setBackgroundColor(7)
 tiles.setTilemap(tilemap`level`)
 crab = sprites.create(img`
     . . . . . . . . . . . c c . . . 
@@ -108,8 +111,9 @@ let rightCarImg = img`
     `
 let speed = 50
 crossingTime = 20
-let introMessage = `Help the snail collect berries from the other side of the road!
-You can only collect one at a time.
+info.setLife(3)
+let introMessage = `You're a snail trying to collect berries from the other side of the road.
+You can only collect one at a time - drop it off at your flower garden before you go back for more.
 Look both ways before you cross!`
 game.showLongText(introMessage, DialogLayout.Full)
 info.startCountdown(crossingTime)
