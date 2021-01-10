@@ -8,7 +8,7 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile3, function (sprite, location
     }
 })
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    crab.y += -16
+    snail.y += -16
 })
 function driveCar (car: Sprite, tileImg: Image, startX: number, vx: number) {
     car.setFlag(SpriteFlag.DestroyOnWall, true)
@@ -17,13 +17,13 @@ function driveCar (car: Sprite, tileImg: Image, startX: number, vx: number) {
     car.vx = vx
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    crab.x += -16
+    snail.x += -16
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    crab.x += 16
+    snail.x += 16
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    crab.y += 16
+    snail.y += 16
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (sprite, location) {
     if (hasBerry) {
@@ -48,11 +48,11 @@ let leftCar: Sprite = null
 let hasBerry = false
 let berriesLeft = 0
 let crossingTime = 0
-let crab: Sprite = null
+let snail: Sprite = null
 let car = null
 scene.setBackgroundColor(7)
 tiles.setTilemap(tilemap`level`)
-crab = sprites.create(img`
+snail = sprites.create(img`
     . . . . . . . . . . . c c . . . 
     . . c c . c c c c 3 c 6 3 c . . 
     . f f 5 c 6 c 5 f f 3 3 6 c . . 
@@ -70,9 +70,9 @@ crab = sprites.create(img`
     c 5 5 5 5 c 5 5 5 5 c 4 c 5 c . 
     . c c c c c c c c c . . c c c . 
     `, SpriteKind.Player)
-tiles.placeOnTile(crab, tiles.getTileLocation(5, 15))
-scene.cameraFollowSprite(crab)
-crab.setFlag(SpriteFlag.StayInScreen, true)
+tiles.placeOnTile(snail, tiles.getTileLocation(5, 15))
+scene.cameraFollowSprite(snail)
+snail.setFlag(SpriteFlag.StayInScreen, true)
 let leftCarImg = img`
     . . . . . . . . . . . . . . . . 
     . . . . . . 2 2 2 2 2 2 2 2 . . 
