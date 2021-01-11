@@ -1,12 +1,7 @@
-scene.onOverlapTile(SpriteKind.Player, myTiles.tile3, function (sprite, location) {
-    if (!(hasBerry)) {
-        tiles.setTileAt(location, sprites.castle.tileGrass3)
-        music.baDing.play()
-        hasBerry = true
-        berriesLeft += 0 - 1
-        info.startCountdown(crossingTime)
-    }
-})
+namespace SpriteKind {
+    export const Uncollected = SpriteKind.create()
+    export const Collected = SpriteKind.create()
+}
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     snail.y += -16
 })
@@ -22,14 +17,59 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     snail.x += 16
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Uncollected, function (sprite, otherSprite) {
+    if (!(heldBerry)) {
+        music.baDing.play()
+        heldBerry = otherSprite
+        otherSprite.setImage(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `)
+        otherSprite.setKind(SpriteKind.Collected)
+        berriesLeft += 0 - 1
+        info.startCountdown(crossingTime)
+    }
+})
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     snail.y += 16
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (sprite, location) {
-    if (hasBerry) {
-        tiles.setTileAt(location, myTiles.tile5)
+    if (heldBerry) {
+        tiles.placeOnTile(heldBerry, location)
+        heldBerry.setImage(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . f f . f f . . . . . 
+            . . . . . f 7 7 f 7 7 f . . . . 
+            . . . . . . f 7 7 7 f . . . . . 
+            . . . . . . . f 7 f . . . . . . 
+            . . . . . . f f 7 f f . . . . . 
+            . . . . f 2 2 2 2 2 2 2 f . . . 
+            . . . f 2 f 2 2 2 f 2 2 2 f . . 
+            . . . f 2 2 2 f 2 2 2 f 2 f . . 
+            . . . . 2 2 2 2 2 2 2 2 2 . . . 
+            . . . . f 2 f 2 2 2 2 2 f . . . 
+            . . . . . 2 2 2 2 f 2 2 . . . . 
+            . . . . . f 2 f 2 2 2 f . . . . 
+            . . . . . . f 2 2 2 f . . . . . 
+            . . . . . . . f f f . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `)
         music.baDing.play()
-        hasBerry = false
+        heldBerry = null
         speed += 10
         info.startCountdown(crossingTime)
         if (berriesLeft == 0) {
@@ -38,6 +78,32 @@ scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (spri
         }
     }
 })
+
+function spawnBerries(numBerries: number, startColumn: number, startRow: number, gap: number) {
+    for (let index = 0; index < numBerries; index++) {
+        berry = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . f f . f f . . . . . 
+            . . . . . f 7 7 f 7 7 f . . . . 
+            . . . . . . f 7 7 7 f . . . . . 
+            . . . . . . . f 7 f . . . . . . 
+            . . . . . . f f 7 f f . . . . . 
+            . . . . f 2 2 2 2 2 2 2 f . . . 
+            . . . f 2 f 2 2 2 f 2 2 2 f . . 
+            . . . f 2 2 2 f 2 2 2 f 2 f . . 
+            . . . . 2 2 2 2 2 2 2 2 2 . . . 
+            . . . . f 2 f 2 2 2 2 2 f . . . 
+            . . . . . 2 2 2 2 f 2 2 . . . . 
+            . . . . . f 2 f 2 2 2 f . . . . 
+            . . . . . . f 2 2 2 f . . . . . 
+            . . . . . . . f f f . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Uncollected)
+        berry.z = -1
+        tiles.placeOnTile(berry, tiles.getTileLocation(startColumn, startRow))
+        startColumn += 1 + gap
+    }
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
     music.pewPew.play()
@@ -45,10 +111,13 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let rightCar: Sprite = null
 let leftCar: Sprite = null
-let hasBerry = false
-let berriesLeft = 0
+let berry: Sprite = null
+let row = 0
+let column = 0
 let crossingTime = 0
 let snail: Sprite = null
+let berriesLeft = 4
+let heldBerry: Sprite = null
 let car = null
 scene.setBackgroundColor(7)
 tiles.setTilemap(tilemap`level`)
@@ -117,7 +186,8 @@ You can only collect one at a time - drop it off at your flower garden before yo
 Look both ways before you cross!`
 game.showLongText(introMessage, DialogLayout.Full)
 info.startCountdown(crossingTime)
-berriesLeft = tiles.getTilesByType(myTiles.tile3).length
+spawnBerries(berriesLeft, 2, 1, 1)
+
 game.onUpdateInterval(500, function () {
     leftCar = sprites.create(leftCarImg, SpriteKind.Enemy)
     driveCar(leftCar, sprites.vehicle.roadHorizontal, 180, 0 - speed)
