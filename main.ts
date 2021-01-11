@@ -140,7 +140,7 @@ snail = sprites.create(img`
     c 5 5 5 5 c 5 5 5 5 c 4 c 5 c . 
     . c c c c c c c c c . . c c c . 
     `, SpriteKind.Player)
-tiles.placeOnTile(snail, tiles.getTileLocation(5, 15))
+tiles.placeOnTile(snail, tiles.getTileLocation(5, 16))
 scene.cameraFollowSprite(snail)
 snail.setFlag(SpriteFlag.StayInScreen, true)
 let leftCarImg = img`
