@@ -70,7 +70,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (spri
             `)
         music.baDing.play()
         heldBerry = null
-        speed += 10
+speed += 10
         info.startCountdown(crossingTime)
         if (berriesLeft == 0) {
             pause(500)
@@ -78,8 +78,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass2, function (spri
         }
     }
 })
-
-function spawnBerries(numBerries: number, startColumn: number, startRow: number, gap: number) {
+function spawnBerries (numBerries: number, startColumn: number, startRow: number, gap: number) {
     for (let index = 0; index < numBerries; index++) {
         berry = sprites.create(img`
             . . . . . . . . . . . . . . . . 
@@ -111,14 +110,16 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let rightCar: Sprite = null
 let leftCar: Sprite = null
+let startColumn = 0
 let berry: Sprite = null
-let row = 0
-let column = 0
 let crossingTime = 0
 let snail: Sprite = null
-let berriesLeft = 4
-let heldBerry: Sprite = null
+let berriesLeft = 0
 let car = null
+let heldBerry: Sprite = null
+let column = 0
+let row = 0
+berriesLeft = 4
 scene.setBackgroundColor(7)
 tiles.setTilemap(tilemap`level`)
 snail = sprites.create(img`
@@ -187,7 +188,6 @@ Look both ways before you cross!`
 game.showLongText(introMessage, DialogLayout.Full)
 info.startCountdown(crossingTime)
 spawnBerries(berriesLeft, 2, 1, 1)
-
 game.onUpdateInterval(500, function () {
     leftCar = sprites.create(leftCarImg, SpriteKind.Enemy)
     driveCar(leftCar, sprites.vehicle.roadHorizontal, 180, 0 - speed)
